@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoicePilot Studio</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <header class="navbar">
+        <div class="navbar-left">
+            <div class="logo">
+                <svg class="logo-icon" viewBox="0 0 32 32" width="28" height="28">
+                    <circle cx="16" cy="16" r="14" fill="none" stroke="var(--accent)" stroke-width="2"/>
+                    <path d="M10 18 Q16 22 22 18" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/>
+                    <circle cx="11" cy="13" r="2" fill="var(--accent)"/>
+                    <circle cx="21" cy="13" r="2" fill="var(--accent)"/>
+                    <path d="M6 8 Q16 2 26 8" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                <span class="logo-text">VoicePilot Studio</span>
+            </div>
+        </div>
+        <div class="navbar-center">
+            <span class="status-indicator" id="connectionStatus">
+                <span class="status-dot"></span>
+                <span data-i18n="status_ready">Ready</span>
+            </span>
+        </div>
+        <div class="navbar-right">
+            <div class="lang-switcher" id="langSwitcher">
+                <button class="lang-btn active" data-lang="en">EN</button>
+                <button class="lang-btn" data-lang="zh-CN">中</button>
+                <button class="lang-btn" data-lang="zh-TW">繁</button>
+                <button class="lang-btn" data-lang="ja">日</button>
+            </div>
+            <button class="icon-btn" id="themeToggle" title="Toggle theme">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="5"/>
+                    <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                </svg>
+            </button>
+            <button class="icon-btn" id="settingsBtn" title="Settings">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <!-- Left Sidebar: Conversation List -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h3 data-i18n="conversations">Conversations</h3>
+                <button class="icon-btn" id="newChatBtn" title="New conversation">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="conversation-list" id="conversationList">
+                <!-- Conversations will be dynamically inserted here -->
+            </div>
+            <div class="sidebar-footer">
+                <button class="btn btn-sm btn-outline" id="exportAllBtn">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    <span data-i18n="export_all">Export All</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Center: Chat Area -->
+        <section class="chat-area" id="chatArea">
+            <div class="chat-messages" id="chatMessages">
+                <!-- Welcome message when no conversations exist -->
+                <div class="welcome-screen" id="welcomeScreen">
+                    <div class="welcome-icon">
+                        <svg viewBox="0 0 64 64" width="64" height="64">
+                            <circle cx="32" cy="32" r="28" fill="none" stroke="var(--accent)" stroke-width="2" opacity="0.5"/>
+                            <circle cx="32" cy="32" r="20" fill="none" stroke="var(--accent)" stroke-width="1.5" opacity="0.3"/>
+                            <path d="M22 36 Q32 42 42 36" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+                            <circle cx="24" cy="28" r="3" fill="var(--accent)" opacity="0.7"/>
+                            <circle cx="40" cy="28" r="3" fill="var(--accent)" opacity="0.7"/>
+                        </svg>
+                    </div>
+                    <h2 data-i18n="welcome_title">Welcome to VoicePilot Studio</h2>
+                    <p data-i18n="welcome_desc">Click the microphone button to start a voice conversation, or type your message below.</p>
+                    <div class="quick-actions">
+                        <button class="quick-action-btn" data-prompt="Hello! Can you introduce yourself?">
+                            <span data-i18n="quick_intro">Introduce yourself</span>
+                        </button>
+                        <button class="quick-action-btn" data-prompt="What can you do for me?">
+                            <span data-i18n="quick_capabilities">Your capabilities</span>
+                        </button>
+                        <button class="quick-action-btn" data-prompt="Tell me a joke.">
+                            <span data-i18n="quick_joke">Tell a joke</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Messages will be dynamically inserted here -->
+            </div>
+            <!-- Text Input Area -->
+            <div class="chat-input-area">
+                <div class="input-wrapper">
+                    <textarea id="textInput" rows="1" placeholder="Type a message..." data-i18n-placeholder="type_message"></textarea>
+                    <button class="icon-btn send-btn" id="sendBtn" title="Send message">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="22" y1="2" x2="11" y2="13"/>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Panel: Avatar -->
+        <aside class="avatar-panel" id="avatarPanel">
+            <div class="avatar-container">
+                <canvas id="avatarCanvas" width="280" height="280"></canvas>
+                <div class="avatar-status" id="avatarStatus">
+                    <span class="avatar-status-dot"></span>
+                    <span data-i18n="avatar_idle">Idle</span>
+                </div>
+            </div>
+            <div class="avatar-controls">
+                <button class="icon-btn" id="avatarToggleBtn" title="Toggle avatar">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                </button>
+                <button class="icon-btn" id="avatarSettingsBtn" title="Avatar settings">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 20h9"/>
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                    </svg>
+                </button>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Bottom Voice Control Bar -->
+    <footer class="voice-bar" id="voiceBar">
+        <div class="voice-bar-inner">
+            <div class="voice-waveform" id="voiceWaveform">
+                <canvas id="waveformCanvas" width="200" height="40"></canvas>
+            </div>
+            <div class="voice-controls">
+                <button class="mic-btn" id="micBtn" title="Start voice input">
+                    <div class="mic-btn-inner">
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                            <line x1="12" y1="19" x2="12" y2="23"/>
+                            <line x1="8" y1="23" x2="16" y2="23"/>
+                        </svg>
+                    </div>
+                    <div class="mic-btn-ring"></div>
+                </button>
+            </div>
+            <div class="voice-status" id="voiceStatus">
+                <span data-i18n="click_to_speak">Click to speak</span>
+            </div>
+            <div class="voice-bar-actions">
+                <button class="icon-btn" id="muteBtn" title="Mute TTS">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                    </svg>
+                </button>
+                <button class="icon-btn" id="stopBtn" title="Stop speaking" style="display:none;">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="6" y="6" width="12" height="12" rx="1"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 data-i18n="settings">Settings</h2>
+                <button class="icon-btn modal-close" id="settingsClose">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Settings Tabs -->
+                <div class="settings-tabs">
+                    <button class="settings-tab active" data-tab="llm" data-i18n="tab_llm">LLM API</button>
+                    <button class="settings-tab" data-tab="tts" data-i18n="tab_tts">TTS</button>
+                    <button class="settings-tab" data-tab="stt" data-i18n="tab_stt">Voice Recognition</button>
+                    <button class="settings-tab" data-tab="avatar" data-i18n="tab_avatar">Avatar</button>
+                    <button class="settings-tab" data-tab="general" data-i18n="tab_general">General</button>
+                </div>
+
+                <!-- LLM API Settings -->
+                <div class="settings-panel active" id="settings-llm">
+                    <div class="form-group">
+                        <label data-i18n="setting_llm_provider">LLM Provider</label>
+                        <select id="llmProvider">
+                            <option value="openai">OpenAI (GPT-4o / GPT-4)</option>
+                            <option value="anthropic">Anthropic (Claude)</option>
+                            <option value="gemini">Google Gemini</option>
+                            <option value="deepseek">DeepSeek</option>
+                            <option value="glm">GLM-5.1 (ZhipuAI)</option>
+                            <option value="custom">Custom OpenAI-Compatible</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="setting_api_key">API Key</label>
+                        <input type="password" id="llmApiKey" placeholder="sk-..." autocomplete="off"/>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="setting_api_base">API Base URL</label>
+                        <input type="text" id="llmApiBase" placeholder="https://api.openai.com/v1"/>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="setting_model">Model</label>
+                        <input type="text" id="llmModel" placeholder="gpt-4o"/>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="setting_system_prompt">System Prompt</label>
+                        <textarea id="llmSystemPrompt" rows="4" placeholder="You are a helpful AI assistant."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="setting_temperature">Temperature</label>
+                        <div class="range-wrapper">
+                            <input type="range" id="llmTemperature" min="0" max="2" step="0.1" value="0.7"/>
+                            <span class="range-value" id="temperatureValue">0.7</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="setting_max_tokens">Max Tokens</label>
+                        <input type="number" id="llmMaxTokens" value="2048" min="64" max="128000"/>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="setting_stream">Stream Response</label>
+                        <label class="toggle">
+                            <input type="checkbox" id="llmStream" checked/>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- TTS Settings -->
+                <div class="settings-panel" id="settings-tts">
+                    <div class="form-group">
+                        <label data-i18n="setting_tts_engine">TTS Engine</label>
+                        <select id="ttsEngine">
+                            <option value="browser">Browser Built-in</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="setting_tts_voice">Voice</label>
+                        <select id="ttsVoice">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="setting_tts_rate">Speech Rate</label>
+                        <div class="range-wrapper">
+                            <input type="range" id="ttsRate" min="0.5" max="2" step="0.1" value="1"/>
+                            <span class="range-value" id="ttsRateValue">1.0</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="setting_tts_pitch">Pitch</label>
+                        <div class="range-wrapper">
+                            <input type="range" id="ttsPitch" min="0.5" max="2" step="0.1" value="1"/>
+                            <span class="range-value" id="ttsPitchValue">1.0</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="setting_tts_volume">Volume</label>
+                        <div class="range-wrapper">
+                            <input type="range" id="ttsVolume" min="0" max="1" step="0.1" value="1"/>
+                            <span class="range-value" id="ttsVolumeValue">1.0</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="setting_auto_speak">Auto-speak AI responses</label>
+                        <label class="toggle">
+                            <input type="checkbox" id="ttsAutoSpeak" checked/>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- STT Settings -->
+                <div class="settings-panel" id="settings-stt">
+                    <div class="form-group">
+                        <label data-i18n="setting_stt_lang">Recognition Language</label>
+                        <select id="sttLanguage">
+                            <option value="en-US">English (US)</option>
+                            <option value="en-GB">English (UK)</option>
+                            <option value="zh-CN">Chinese (Simplified)</option>
+                            <option value="zh-TW">Chinese (Traditional)</option>
+                            <option value="ja-JP">Japanese</option>
+                            <option value="ko-KR">Korean</option>
+                            <option value="fr-FR">French</option>
+                            <option value="de-DE">German</option>
+                            <option value="es-ES">Spanish</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="setting_stt_continuous">Continuous Recognition</label>
+                        <label class="toggle">
+                            <input type="checkbox" id="sttContinuous" checked/>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="setting_stt_interim">Show Interim Results</label>
+                        <label class="toggle">
+                            <input type="checkbox" id="sttInterim" checked/>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="setting_voice_interrupt">Voice Interrupt (Stop TTS when speaking)</label>
+                        <label class="toggle">
+                            <input type="checkbox" id="voiceInterrupt" checked/>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="setting_interrupt_threshold">Interrupt Threshold</label>
+                        <div class="range-wrapper">
+                            <input type="range" id="interruptThreshold" min="0.01" max="0.3" step="0.01" value="0.05"/>
+                            <span class="range-value" id="interruptThresholdValue">0.05</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Avatar Settings -->
+                <div class="settings-panel" id="settings-avatar">
+                    <div class="form-group">
+                        <label data-i18n="setting_avatar_enabled">Show Avatar</label>
+                        <label class="toggle">
+                            <input type="checkbox" id="avatarEnabled" checked/>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="setting_avatar_color">Avatar Primary Color</label>
+                        <input type="color" id="avatarColor" value="#6366f1"/>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="setting_avatar_size">Avatar Size</label>
+                        <div class="range-wrapper">
+                            <input type="range" id="avatarSize" min="120" max="400" step="10" value="280"/>
+                            <span class="range-value" id="avatarSizeValue">280</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="setting_avatar_style">Avatar Style</label>
+                        <select id="avatarStyle">
+                            <option value="circle">Circle</option>
+                            <option value="rounded">Rounded Square</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- General Settings -->
+                <div class="settings-panel" id="settings-general">
+                    <div class="form-group">
+                        <label data-i18n="setting_language">Interface Language</label>
+                        <select id="generalLanguage">
+                            <option value="en">English</option>
+                            <option value="zh-CN">简体中文</option>
+                            <option value="zh-TW">繁體中文</option>
+                            <option value="ja">日本語</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="setting_theme">Theme</label>
+                        <select id="generalTheme">
+                            <option value="dark">Dark</option>
+                            <option value="light">Light</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="setting_font_size">Font Size</label>
+                        <div class="range-wrapper">
+                            <input type="range" id="generalFontSize" min="12" max="20" step="1" value="14"/>
+                            <span class="range-value" id="fontSizeValue">14</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="setting_send_on_enter">Send on Enter</label>
+                        <label class="toggle">
+                            <input type="checkbox" id="sendOnEnter" checked/>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="form-group form-actions">
+                        <button class="btn btn-danger" id="clearAllData">
+                            <span data-i18n="clear_all_data">Clear All Data</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="settingsCancel" data-i18n="cancel">Cancel</button>
+                <button class="btn btn-primary" id="settingsSave" data-i18n="save">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Context Menu for Conversations -->
+    <div class="context-menu" id="contextMenu">
+        <div class="context-menu-item" data-action="rename">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            <span data-i18n="context_rename">Rename</span>
+        </div>
+        <div class="context-menu-item" data-action="export">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span data-i18n="context_export">Export</span>
+        </div>
+        <div class="context-menu-item danger" data-action="delete">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            <span data-i18n="context_delete">Delete</span>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/i18n.js"></script>
+    <script src="js/llm-adapter.js"></script>
+    <script src="js/avatar-engine.js"></script>
+    <script src="js/audio-visualizer.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
